@@ -1,5 +1,7 @@
 import express from "express";
 import cors from "cors";
+import { depthRouter } from "./routes/depth";
+import { klineRouter } from "./routes/kline";
 
 const app = express();
 app.use(cors());
