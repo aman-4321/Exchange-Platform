@@ -2,6 +2,9 @@ import express from "express";
 import cors from "cors";
 import { depthRouter } from "./routes/depth";
 import { klineRouter } from "./routes/kline";
+import { orderRouter } from "./routes/order";
+import { tradesRouter } from "./routes/trades";
+import { tickersRouter } from "./routes/ticker";
 
 const app = express();
 app.use(cors());
