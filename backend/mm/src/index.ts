@@ -2,7 +2,7 @@ import axios from "axios";
 
 const BASE_URL = "http://localhost:3000";
 const TOTAL_BIDS = 15;
-const TOTAL_ASK = 15;
+const TOTAL_ASKS = 15;
 const MARKET = "TATA_INR";
 const USER_ID = "5";
 
@@ -21,7 +21,7 @@ async function main() {
   const cancelledAsks = await cancelAsksLessThan(openOrders.data, price);
 
   let bidsToAdd = TOTAL_BIDS - totalBids - cancelledBids;
-  let asksToAdd = TOTAL_ASK - totalAsks - cancelledAsks;
+  let asksToAdd = TOTAL_ASKS - totalAsks - cancelledAsks;
 
   while (bidsToAdd > 0 || asksToAdd > 0) {
     if (bidsToAdd > 0) {
