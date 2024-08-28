@@ -19,7 +19,7 @@ export class UserManager {
     const id = this.getRandomId();
     const user = new User(id, ws);
     this.users.set(id, user);
-    this;
+    this.registerOnClose(ws, id);
     return user;
   }
 
