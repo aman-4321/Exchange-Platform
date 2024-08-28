@@ -19,6 +19,30 @@ export class SubscriptionManager {
   }
 
   public subscribe(userId: string, subscription: string) {
-    if (this.subscriptions.get(userId)?.includes(subscription)) return;
+    if (this.subscriptions.get(userId)?.includes(subscription)) {
+      return;
+    }
+
+    this.subscriptions.set(
+      userId,
+      (this.subscriptions.get(userId) || []).concat(subscription),
+    );
+    this.reverseSubscriptions.set(
+      subscription,
+      (this.reverseSubscriptions.get(subscription) || []).concat(userId),
+    );
+    if (this.reverseSubscriptions.get(subscription)?.length === 1) {
+      this.redisClient.subscribe(subscription, this.redisCallbackHandler);
+    }
+  }
+
+  private redisCallbackHandler = (message: string, channel: string) => {
+    const parsedmessage = JSON.parse(message);
+    this.reverseSubscriptions.get(channel)?.forEach((s) => {});
+  };
+
+  public userLeft(userId: string) {
+    console.log("user left " + userId);
+    this.subscriptions.get(userId)?.forEach((s) => this);
   }
 }
