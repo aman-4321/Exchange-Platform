@@ -182,7 +182,7 @@ export class Orderbook {
       asks.push([price, bidsObj[price].toString()]);
     }
 
-    for (const price in bidsObj) {
+    for (const price in asksObj) {
       asks.push([price, asksObj[price].toString()]);
     }
 
@@ -190,5 +190,29 @@ export class Orderbook {
       bids,
       asks,
     };
+  }
+
+  getOpenOrders(userId: string): Order[] {
+    const asks = this.asks.filter((x) => x.userId === userId);
+    const bids = this.bids.filter((x) => x.userId === userId);
+    return [...asks, ...bids];
+  }
+
+  cancelBid(order: Order) {
+    const index = this.bids.findIndex((x) => x.orderId == order.orderId);
+    if (index !== -1) {
+      const price = this.bids[index].price;
+      this.bids.splice(index, 1);
+      return price;
+    }
+  }
+
+  cancelAsk(order: Order) {
+    const index = this.asks.findIndex((x) => x.orderId === order.orderId);
+    if (index !== -1) {
+      const price = this.asks[index].price;
+      this.bids.splice(index, 1);
+      return price;
+    }
   }
 }
