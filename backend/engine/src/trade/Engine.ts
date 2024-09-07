@@ -28,7 +28,7 @@ export class Engine {
     let snapshot = null;
     try {
       if (process.env.WITH_SNAPSHOT) {
-        snapshot = fs.readFileSync("./snapshot.json");
+        snapshot = fs.readFileSync("../../snapshot.json");
       }
     } catch (e) {
       console.log("No snapshot found");
@@ -61,7 +61,7 @@ export class Engine {
       orderbooks: this.orderbooks.map((o) => o.getSnapshot()),
       balances: Array.from(this.balances.entries()),
     };
-    fs.writeFileSync("./snapshot.json", JSON.stringify(snapshotSnapshot));
+    fs.writeFileSync("../../snapshot.json", JSON.stringify(snapshotSnapshot));
   }
 
   process({
@@ -289,7 +289,7 @@ export class Engine {
         data: {
           market: market,
           id: fill.tradeId.toString(),
-          isBuyerMaker: fill.otherUserId === userId, // TODO: Is this right?
+          isBuyerMaker: fill.otherUserId === userId,
           price: fill.price,
           quantity: fill.qty.toString(),
           quoteQuantity: (fill.qty * Number(fill.price)).toString(),
@@ -306,7 +306,7 @@ export class Engine {
         data: {
           e: "trade",
           t: fill.tradeId,
-          m: fill.otherUserId === userId, // TODO: Is this right?
+          m: fill.otherUserId === userId,
           p: fill.price,
           q: fill.qty.toString(),
           s: market,

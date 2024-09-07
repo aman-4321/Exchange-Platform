@@ -5,6 +5,8 @@ import { klineRouter } from "./routes/kline";
 import { orderRouter } from "./routes/order";
 import { tradesRouter } from "./routes/trades";
 import { tickersRouter } from "./routes/ticker";
+import { balancesRouter } from "./routes/balances";
+import { onRampRouter } from "./routes/onRamp";
 
 const app = express();
 app.use(cors());
@@ -15,6 +17,8 @@ app.use("/api/v1/depth", depthRouter);
 app.use("/api/v1/trades", tradesRouter);
 app.use("/api/v1/klines", klineRouter);
 app.use("/api/v1/tickers", tickersRouter);
+app.use("/api/v1/balances", balancesRouter);
+app.use("/api/v1/onRamp", onRampRouter);
 
 app.listen(3000, () => {
   console.log("Server is running on port 3000");
