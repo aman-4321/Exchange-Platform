@@ -46,7 +46,7 @@ export function SwapUI({ market }: { market: string }) {
                   />
                   <div className="flex flex-row absolute right-1 top-1 p-2">
                     <div className="relative">
-                      <img src="/usdc.webp" className="w-6 h-6" />
+                      <img src="/usdc.webp" className="w-6 h-6" alt="" />
                     </div>
                   </div>
                 </div>
@@ -66,7 +66,7 @@ export function SwapUI({ market }: { market: string }) {
                 />
                 <div className="flex flex-row absolute right-1 top-1 p-2">
                   <div className="relative">
-                    <img src="/sol.webp" className="w-6 h-6" />
+                    <img src="/sol.webp" className="w-6 h-6" alt="" />
                   </div>
                 </div>
               </div>

@@ -109,7 +109,7 @@ export function Depth({ market }: { market: string }) {
         `DEPTH-${market}`,
       );
     };
-  }, []);
+  }, [market]);
 
   return (
     <div>

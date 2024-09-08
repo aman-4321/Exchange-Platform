@@ -4,7 +4,7 @@ import { Client } from "pg";
 const pgClient = new Client({
   user: "user",
   host: "localhost",
-  database: "db",
+  database: "database",
   password: "password",
   port: 5432,
 });

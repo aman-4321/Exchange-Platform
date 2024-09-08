@@ -4,10 +4,10 @@ import { Client } from "pg";
 export const tradesRouter = Router();
 
 const client = new Client({
-  user: "your_user",
+  user: "user",
   host: "localhost",
-  database: "your_database",
-  password: "your_password",
+  database: "database",
+  password: "password",
   port: 5432,
 });
 client.connect();

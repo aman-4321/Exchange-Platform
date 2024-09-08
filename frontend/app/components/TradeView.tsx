@@ -5,7 +5,7 @@ import { KLine } from "../utils/types";
 
 export function TradeView({ market }: { market: string }) {
   const chartRef = useRef<HTMLDivElement>(null);
-  const chartManagerRef = useRef<ChartManager | null>(null); // Initialize with null
+  const chartManagerRef = useRef<ChartManager | null>(null);
 
   useEffect(() => {
     const init = async () => {
