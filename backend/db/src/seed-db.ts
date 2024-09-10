@@ -97,6 +97,15 @@ async function initializeDB() {
     );
   `);
 
+  await client.query(`
+  CREATE TABLE users (
+   id SERIAL PRIMARY KEY,
+   username VARCHAR(255) UNIQUE NOT NULL,
+   email VARCHAR(255) UNIQUE NOT NULL,
+   password TEXT NOT NULL
+);
+`);
+
   await client.end();
   console.log("Database initialized successfully");
 }

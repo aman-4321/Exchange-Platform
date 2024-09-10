@@ -1,4 +1,4 @@
-import express, { NextFunction, Request, Response, Router } from "express";
+import { Request, Response, Router } from "express";
 import { z } from "zod";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
@@ -14,9 +14,6 @@ declare global {
 }
 
 export const userRouter = Router();
-
-const app = express();
-app.use(express.json());
 
 const JWT_SECRET = process.env.JWT_SECRET ?? "sec3ret";
 const SALT_ROUNDS = 10;
@@ -41,7 +38,7 @@ const signinSchema = z.object({
   password: z.string().min(6, "Password must be at least 6 characters long"),
 });
 
-app.post("/signup", async (req, res) => {
+userRouter.post("/signup", async (req: Request, res: Response) => {
   try {
     const parsedData = signupSchema.parse(req.body);
     const { username, email, password } = parsedData;
@@ -50,6 +47,7 @@ app.post("/signup", async (req, res) => {
       "SELECT * FROM users WHERE email = $1",
       [email],
     );
+
     if (userExists.rows.length > 0) {
       return res.status(400).send("User already exists");
     }
@@ -70,7 +68,7 @@ app.post("/signup", async (req, res) => {
   }
 });
 
-app.post("/signin", async (req, res) => {
+userRouter.post("/signin", async (req: Request, res: Response) => {
   try {
     const parsedData = signinSchema.parse(req.body);
     const { email, password } = parsedData;
