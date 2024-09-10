@@ -1,10 +1,11 @@
 import { Request, Response, Router } from "express";
 import { RedisManager } from "../RedisManager";
 import { CANCEL_ORDER, CREATE_ORDER, GET_OPEN_ORDERS } from "../types";
+import { authMiddleware } from "../middleware";
 
 export const orderRouter = Router();
 
-orderRouter.post("/", async (req: Request, res: Response) => {
+orderRouter.post("/", authMiddleware, async (req: Request, res: Response) => {
   const { market, price, quantity, side, userId } = req.body;
   console.log({ market, price, quantity, side, userId });
   try {
@@ -26,7 +27,7 @@ orderRouter.post("/", async (req: Request, res: Response) => {
   }
 });
 
-orderRouter.delete("/", async (req: Request, res: Response) => {
+orderRouter.delete("/", authMiddleware, async (req: Request, res: Response) => {
   const { orderId, market } = req.body;
 
   try {

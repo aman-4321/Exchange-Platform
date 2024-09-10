@@ -1,5 +1,6 @@
 import { Request, Response, Router } from "express";
 import { Client } from "pg";
+import { authMiddleware } from "../middleware";
 
 export const tradesRouter = Router();
 
@@ -12,7 +13,7 @@ const client = new Client({
 });
 client.connect();
 
-tradesRouter.get("/", async (req: Request, res: Response) => {
+tradesRouter.get("/", authMiddleware, async (req: Request, res: Response) => {
   const { market, limit = 10 } = req.query;
 
   try {

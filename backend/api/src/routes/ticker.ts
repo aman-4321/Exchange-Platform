@@ -1,5 +1,6 @@
 import { Request, Response, Router } from "express";
 import { Client } from "pg";
+import { authMiddleware } from "../middleware";
 
 export const tickersRouter = Router();
 
@@ -12,7 +13,7 @@ const client = new Client({
 });
 client.connect();
 
-tickersRouter.get("/", async (req: Request, res: Response) => {
+tickersRouter.get("/", authMiddleware, async (req: Request, res: Response) => {
   try {
     const query = `
       SELECT * FROM ticker

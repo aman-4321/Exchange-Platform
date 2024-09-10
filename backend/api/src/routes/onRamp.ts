@@ -1,7 +1,8 @@
 import { Request, Response, Router } from "express";
 import { Client } from "pg";
+import { authMiddleware } from "../middleware";
 
-const onRampRouter = Router();
+export const onRampRouter = Router();
 const client = new Client({
   user: "user",
   host: "localhost",
@@ -11,7 +12,7 @@ const client = new Client({
 });
 client.connect();
 
-onRampRouter.post("/", async (req: Request, res: Response) => {
+onRampRouter.post("/", authMiddleware, async (req: Request, res: Response) => {
   const { userId, amount } = req.body;
 
   if (!userId || !amount) {
@@ -45,5 +46,3 @@ onRampRouter.post("/", async (req: Request, res: Response) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-
-export { onRampRouter };

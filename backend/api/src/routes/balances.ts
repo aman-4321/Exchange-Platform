@@ -1,5 +1,6 @@
 import { Request, Response, Router } from "express";
 import { Client } from "pg";
+import { authMiddleware } from "../middleware";
 
 export const balancesRouter = Router();
 const client = new Client({
@@ -11,7 +12,7 @@ const client = new Client({
 });
 client.connect();
 
-balancesRouter.get("/", async (req: Request, res: Response) => {
+balancesRouter.get("/", authMiddleware, async (req: Request, res: Response) => {
   const userId = req.query.userId as string;
 
   if (!userId) {
