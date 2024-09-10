@@ -11,16 +11,15 @@ export const authMiddleware = (
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return res.status(401).send("Unauthorized: No token provided");
+    return res.status(401).json({ error: "Token is required" });
   }
 
   const token = authHeader.split(" ")[1];
-
-  jwt.verify(token, JWT_SECRET, (err: any, decoded: any) => {
-    if (err) {
-      return res.status(403).send("Unauthorized: Invalid token");
-    }
-    req.user = decoded;
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET) as { userId: string };
+    req.user = { id: decoded.userId };
     next();
-  });
+  } catch (error) {
+    return res.status(401).json({ error: "Invalid or expired token" });
+  }
 };

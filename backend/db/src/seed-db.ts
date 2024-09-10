@@ -98,13 +98,29 @@ async function initializeDB() {
   `);
 
   await client.query(`
-  CREATE TABLE users (
-   id SERIAL PRIMARY KEY,
-   username VARCHAR(255) UNIQUE NOT NULL,
-   email VARCHAR(255) UNIQUE NOT NULL,
-   password TEXT NOT NULL
-);
-`);
+    CREATE TABLE IF NOT EXISTS users (
+      id SERIAL PRIMARY KEY,
+      username VARCHAR(255) UNIQUE NOT NULL,
+      email VARCHAR(255) UNIQUE NOT NULL,
+      password TEXT NOT NULL
+    );
+  `);
+
+  await client.query(`
+    CREATE TABLE IF NOT EXISTS balances (
+      user_id INT PRIMARY KEY,
+      balance NUMERIC NOT NULL,
+      amount NUMERIC NOT NULL DEFAULT 0,
+      FOREIGN KEY (user_id) REFERENCES users(id)
+    );
+  `);
+
+  await client.query(`
+    INSERT INTO balances (user_id, balance, amount) VALUES
+    (1, 1000.00, 0),
+    (2, 500.00, 0)
+    ON CONFLICT (user_id) DO NOTHING;
+  `);
 
   await client.end();
   console.log("Database initialized successfully");

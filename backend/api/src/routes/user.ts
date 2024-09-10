@@ -3,12 +3,12 @@ import { z } from "zod";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { Client } from "pg";
+import { signinSchema, signupSchema } from "../types/types";
 
 declare global {
   namespace Express {
     interface Request {
-      user?: string;
-      Headers?: string;
+      user?: { id: string };
     }
   }
 }
@@ -27,17 +27,6 @@ const pgClient = new Client({
 });
 pgClient.connect();
 
-const signupSchema = z.object({
-  username: z.string().min(3, "Username must be at least 3 characters long"),
-  email: z.string().email("Invalid email address"),
-  password: z.string().min(6, "Password must be at least 6 characters long"),
-});
-
-const signinSchema = z.object({
-  email: z.string().email("Invalid email address"),
-  password: z.string().min(6, "Password must be at least 6 characters long"),
-});
-
 userRouter.post("/signup", async (req: Request, res: Response) => {
   try {
     const parsedData = signupSchema.parse(req.body);
@@ -54,15 +43,20 @@ userRouter.post("/signup", async (req: Request, res: Response) => {
 
     const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
 
-    await pgClient.query(
-      "INSERT INTO users (username, email, password) VALUES ($1, $2, $3)",
+    const result = await pgClient.query(
+      "INSERT INTO users (username, email, password) VALUES ($1, $2, $3) RETURNING id",
       [username, email, hashedPassword],
     );
 
-    res.status(201).send("User registered successfully");
+    const userId = result.rows[0].id;
+    const token = jwt.sign({ userId, email }, JWT_SECRET, { expiresIn: "1h" });
+
+    res
+      .status(201)
+      .json({ token, userId, message: "User registered successfully" });
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return res.status(400).send(error.errors);
+      return res.status(400).json(error.errors);
     }
     res.status(500).send("Server error");
   }
@@ -93,10 +87,10 @@ userRouter.post("/signin", async (req: Request, res: Response) => {
       { expiresIn: "1h" },
     );
 
-    res.send({ token, message: "Logged in successfully" });
+    res.json({ token, userId: userData.id, message: "Logged in successfully" });
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return res.status(400).send(error.errors);
+      return res.status(400).json(error.errors);
     }
     res.status(500).send("Server error");
   }

@@ -13,7 +13,7 @@ const client = new Client({
 client.connect();
 
 balancesRouter.get("/", authMiddleware, async (req: Request, res: Response) => {
-  const userId = req.query.userId as string;
+  const userId = req.user?.id;
 
   if (!userId) {
     return res.status(400).json({ error: "User ID is required" });
