@@ -16,15 +16,16 @@ export const klineRouter = Router();
 klineRouter.get("/", async (req: Request, res: Response) => {
   const { market, interval, startTime, endTime } = req.query;
 
-  if (
-    !startTime ||
-    !endTime ||
-    typeof startTime !== "string" ||
-    typeof endTime !== "string"
-  ) {
+  if (!market || !startTime || !endTime) {
+    return res.status(400).json({
+      error: "Market, startTime, and endTime are required",
+    });
+  }
+
+  if (typeof startTime !== "string" || typeof endTime !== "string") {
     return res
       .status(400)
-      .send("startTime and endTime are required and must be valid timestamps");
+      .json({ error: "startTime and endTime must be strings" });
   }
 
   const start = new Date(parseInt(startTime) * 1000);
@@ -33,35 +34,35 @@ klineRouter.get("/", async (req: Request, res: Response) => {
   let query;
   switch (interval) {
     case "1m":
-      query = `SELECT * FROM klines_1m WHERE bucket >= $1 AND bucket <= $2`;
+      query = `SELECT * FROM klines_1m WHERE market = $1 AND bucket >= $2 AND bucket <= $3`;
       break;
     case "1h":
-      query = "SELECT * FROM klines_1h WHERE bucket >= $1 AND bucket <= $2";
+      query = `SELECT * FROM klines_1h WHERE market = $1 AND bucket >= $2 AND bucket <= $3`;
       break;
     case "1w":
-      query = "SELECT * FROM klines_1w WHERE bucket >= $1 AND bucket <= $2";
+      query = `SELECT * FROM klines_1w WHERE market = $1 AND bucket >= $2 AND bucket <= $3`;
       break;
     default:
-      return res.status(400).send("Invalid interval");
+      return res.status(400).json({ error: "Invalid interval" });
   }
 
   try {
-    const result = await pgClient.query(query, [start, end]);
+    const result = await pgClient.query(query, [market, start, end]);
     res.json(
-      result.rows.map((x) => ({
-        close: x.close,
-        end: x.bucket,
-        high: x.high,
-        low: x.low,
-        open: x.open,
-        quoteVolume: x.quoteVolume,
-        start: x.start,
-        trades: x.trades,
-        volume: x.volume,
+      result.rows.map((row) => ({
+        start: row.start,
+        end: row.bucket,
+        open: row.open,
+        high: row.high,
+        low: row.low,
+        close: row.close,
+        volume: row.volume,
+        quoteVolume: row.quoteVolume,
+        trades: row.trades,
       })),
     );
   } catch (err) {
-    console.log(err);
-    res.status(500).send(err);
+    console.error("Error fetching kline data:", err);
+    res.status(500).json({ error: "Internal server error" });
   }
 });
